@@ -1,7 +1,10 @@
 package aws_landing_zone
 
 import (
+	"github.com/hashicorp/terraform-cdk-go/cdktf"
+
 	"github.com/tflz/aws-landing-zone/config/organization_config"
+	"github.com/tflz/aws-landing-zone/stacks/organization_stack"
 )
 
 func Build() {
@@ -11,19 +14,8 @@ func Build() {
 		panic(err)
 	}
 
-	// Print the home region
-	println("Home Region:", org_config.HomeRegion)
+	app := cdktf.NewApp(nil)
+	organization_stack.NewStack(app, org_config)
 
-	for _, ou := range org_config.OrganizationalUnits {
-		switch ou.Parent.(type) {
-		case organization_config.RootOrganizationalUnitReference:
-			println("Organization Unit:", ou.Alias, "Name:", ou.Name, "Parent: ROOT")
-		case organization_config.AliasOrganizationalUnitReference:
-			println("Organization Unit:", ou.Alias, "Name:", ou.Name, "Parent Alias:", ou.Parent.(organization_config.AliasOrganizationalUnitReference).Alias)
-		case organization_config.RawOrganizationalUnitReference:
-			println("Organization Unit:", ou.Alias, "Name:", ou.Name, "Parent ID:", ou.Parent.(organization_config.RawOrganizationalUnitReference).ParentId)
-		default:
-			println("Organization Unit:", ou.Alias, "Name:", ou.Name, "Parent: unknown")
-		}
-	}
+	app.Synth()
 }
