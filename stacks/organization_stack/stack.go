@@ -6,29 +6,29 @@ import (
 	organizational_units "github.com/cdktf/cdktf-provider-aws-go/aws/v21/organizationsorganizationalunit"
 	awsprovider "github.com/cdktf/cdktf-provider-aws-go/aws/v21/provider"
 	"github.com/hashicorp/terraform-cdk-go/cdktf"
-
-	"github.com/tflz/aws-landing-zone/config/organization_config"
+	"github.com/tflz/aws-landing-zone/config_store"
+	"github.com/tflz/aws-landing-zone/config_store/organization_config"
 )
 
 type OrganizationStack struct {
 	Organization        organizations.OrganizationsOrganization
 	OrganizationalUnits map[string]organizational_units.OrganizationsOrganizationalUnit
 
-	terraform_stack     cdktf.TerraformStack
-	organization_config *organization_config.OrganizationConfig
+	terraform_stack cdktf.TerraformStack
+	config_store    *config_store.ConfigStore
 }
 
-func NewStack(app cdktf.App, org_config *organization_config.OrganizationConfig) *OrganizationStack {
+func NewStack(app cdktf.App, config_store *config_store.ConfigStore) *OrganizationStack {
 	stack_name := "organization"
 	tf_stack := cdktf.NewTerraformStack(app, &stack_name)
 
 	awsprovider.NewAwsProvider(tf_stack, jsii.String("management-account"), &awsprovider.AwsProviderConfig{
-		Region: jsii.String(org_config.HomeRegion),
+		Region: jsii.String(config_store.OrganizationConfig.HomeRegion),
 	})
 
 	stack := &OrganizationStack{
-		terraform_stack:     tf_stack,
-		organization_config: org_config,
+		terraform_stack: tf_stack,
+		config_store:    config_store,
 
 		OrganizationalUnits: make(map[string]organizational_units.OrganizationsOrganizationalUnit),
 	}
@@ -71,7 +71,7 @@ func (o *OrganizationStack) GetSortedOrganizationalUnits() []organization_config
 	graph := make(map[string][]organization_config.OrganizationalUnit)
 	queue := make([]organization_config.OrganizationalUnit, 0)
 
-	for _, ou := range o.organization_config.OrganizationalUnits {
+	for _, ou := range o.config_store.OrganizationConfig.OrganizationalUnits {
 		switch ou.Parent.(type) {
 		case organization_config.RootOrganizationalUnitReference, organization_config.RawOrganizationalUnitReference:
 			// Root or raw reference, no parent
