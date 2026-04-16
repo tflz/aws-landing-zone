@@ -14,7 +14,7 @@ resource "spacelift_stack" "control_plane" {
 
 resource "spacelift_aws_integration" "control_plane" {
   name     = "${var.landing_zone_name}-aws-integration"
-  role_arn = "arn:${data.aws_partition.current.id}:iam::${data.aws_caller_identity.current.account_id}:role/${var.landing_zone_name}-control-plan"
+  role_arn = "arn:${data.aws_partition.current.id}:iam::${data.aws_caller_identity.current.account_id}:role/${var.landing_zone_name}/spacelift/control-plane"
 }
 
 resource "spacelift_aws_integration_attachment" "control_plane" {
