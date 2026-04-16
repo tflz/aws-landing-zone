@@ -25,6 +25,10 @@ resource "spacelift_aws_integration_attachment" "control_plane" {
   write          = true
 
   depends_on = [ aws_iam_role.spacelift_integration ]
+
+  lifecycle {
+    replace_triggered_by = [ aws_iam_role.spacelift_integration ]
+  }
 }
 
 data "spacelift_aws_integration_attachment_external_id" "control_plane" {
