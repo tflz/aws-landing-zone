@@ -17,6 +17,15 @@ resource "spacelift_aws_integration" "control_plane" {
   role_arn = "arn:${data.aws_partition.current.id}:iam::${data.aws_caller_identity.current.account_id}:role/${var.landing_zone_name}-control-plan"
 }
 
+resource "spacelift_aws_integration_attachment" "control_plane" {
+  integration_id = spacelift_aws_integration.control_plane.id
+  stack_id       = spacelift_stack.control_plane.id 
+  read           = true
+  write          = true
+
+  depends_on = [ aws_iam_role.spacelift_integration ]
+}
+
 data "spacelift_aws_integration_attachment_external_id" "control_plane" {
   integration_id = spacelift_aws_integration.control_plane.id
   stack_id       = spacelift_stack.control_plane.id 
