@@ -5,6 +5,7 @@ resource "spacelift_space" "landing_zone" {
 
 resource "spacelift_stack" "control_plane" {
   name       = "${var.landing_zone_name}-control-plane"
+  space_id   = spacelift_space.landing_zone.id
   autodeploy = true
 
   repository = var.github_repository_name
