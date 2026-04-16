@@ -3,7 +3,7 @@ data "aws_partition" "current" {}
 data "aws_caller_identity" "current" {}
 
 resource "aws_iam_role" "spacelift_integration" {
-  name = "control_plane"
+  name = "control-plane"
   path = "/${var.landing_zone_name}/spacelift/"
 
   assume_role_policy = core::jsonencode({
