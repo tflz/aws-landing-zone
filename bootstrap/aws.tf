@@ -9,7 +9,7 @@ resource "aws_iam_role" "spacelift_integration" {
   assume_role_policy = core::jsonencode({
     Version = "2012-10-17",
     Statement = [
-      data.spacelift_aws_integration_attachment_external_id.control_plane.assume_role_policy_statement
+      core::jsonencode(data.spacelift_aws_integration_attachment_external_id.control_plane.assume_role_policy_statement)
     ]
   })
 }
