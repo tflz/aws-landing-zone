@@ -19,7 +19,7 @@ resource "spacelift_aws_integration" "control_plane" {
 
 data "spacelift_aws_integration_attachment_external_id" "control_plane" {
   integration_id = spacelift_aws_integration.control_plane.id
-  stack_id       = spacelift_stack.control_plan.id 
+  stack_id       = spacelift_stack.control_plane.id 
   read           = true
   write          = true
 }
